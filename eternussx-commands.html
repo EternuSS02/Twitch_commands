@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>eternussx — Chat Commands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF3E6;
+    --beige: #EBDFC6;
+    --beige-dark: #D8C6A1;
+    --line: #3A3226;
+    --ink: #2C2418;
+    --ink-soft: #6B5F4A;
+    --accent: #B99A5B;
+    --accent-2: #8C7038;
+    --white: #FFFDF8;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); image-rendering: pixelated; }
+
+  body {
+    margin: 0;
+    background: var(--beige);
+    background-image:
+      linear-gradient(var(--beige-dark) 1px, transparent 1px),
+      linear-gradient(90deg, var(--beige-dark) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--ink);
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    line-height: 1.4;
+    min-height: 100%;
+  }
+
+  /* ---------- pixel border utility ---------- */
+  .pixel-box {
+    background: var(--cream);
+    border: 4px solid var(--line);
+    box-shadow:
+      4px 0 0 0 var(--line),
+      0 4px 0 0 var(--line),
+      4px 4px 0 0 var(--line),
+      8px 8px 0 0 var(--beige-dark);
+    position: relative;
+  }
+
+  /* ---------- layout ---------- */
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  header.hero {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .avatar-block {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 20px;
+    background: var(--accent);
+    border: 4px solid var(--line);
+    box-shadow: 6px 6px 0 0 var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 28px;
+    color: var(--cream);
+    overflow: hidden;
+  }
+
+  .avatar-block img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+  }
+
+  h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin: 0 0 10px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .channel-tag {
+    display: inline-block;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: var(--white);
+    background: var(--accent-2);
+    border: 3px solid var(--line);
+    padding: 4px 14px;
+    box-shadow: 3px 3px 0 0 var(--line);
+  }
+
+  .sub {
+    margin-top: 18px;
+    color: var(--ink-soft);
+    font-size: 25px;
+  }
+
+  /* ---------- search ---------- */
+  .search-row {
+    margin: 36px 0 28px;
+  }
+
+  .search-box {
+    padding: 14px 16px;
+  }
+
+  .search-box input {
+    width: 100%;
+    background: var(--white);
+    border: 3px solid var(--line);
+    padding: 10px 12px;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .search-box input::placeholder { color: var(--ink-soft); }
+  .search-box input:focus {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+
+  .count-label {
+    margin-top: 10px;
+    font-size: 16px;
+    color: var(--ink-soft);
+    padding-left: 4px;
+  }
+
+  /* ---------- command list ---------- */
+  #command-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .cmd-card {
+    padding: 16px 18px;
+  }
+
+  .cmd-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--accent-2);
+    margin: 0 0 10px;
+    word-break: break-word;
+  }
+
+  .cmd-desc {
+    margin: 0;
+    color: var(--ink);
+    font-size: 20px;
+  }
+
+  .cmd-desc a {
+    color: var(--accent-2);
+    text-decoration: none;
+    border-bottom: 2px dotted var(--accent-2);
+  }
+ 
+  .cmd-desc a:hover {
+    color: var(--ink);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-soft);
+    font-size: 20px;
+  }
+
+  .empty-state .big {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 14px;
+    line-height: 1.8;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 56px;
+    color: var(--ink-soft);
+    font-size: 17px;
+  }
+
+  footer a {
+    color: var(--accent-2);
+    text-decoration: none;
+    border-bottom: 2px dotted var(--accent-2);
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 17px; }
+    .cmd-name { font-size: 12px; }
+    body { font-size: 18px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cmd-card { transition: transform 0.1s ease; }
+    .cmd-card:hover { transform: translate(-2px, -2px); }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <!-- ============================================================
+           LOGO / PROFILE PICTURE GOES HERE.
+           Right now this is just a pixel box with the letter "E".
+           To use your own image instead, replace the line below with:
+           <img src="YOUR_IMAGE_URL_OR_FILE" alt="eternussx logo">
+           (keep the class="avatar-block" so it keeps the pixel-border style)
+      ============================================================ -->
+      <img class="avatar-block" src="logo.png" alt="eternussx logo">
+      <h1>eternussx</h1>
+      <p class="sub"><i>Chat Commands</i></p>
+    </header>
+
+    <div class="search-row pixel-box search-box">
+      <input type="text" id="search-input" placeholder="search commands..." autocomplete="off">
+    </div>
+    <div class="count-label" id="count-label"></div>
+
+    <div id="command-list"></div>
+
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <span class="big">no matches</span>
+      try a different search
+    </div>
+
+    <footer>
+     <a href="https://twitch.tv/eternussx" target="_blank" rel="noopener">twitch.tv/eternussx</a>
+    </footer>
+  </div>
+
+<script>
+  // ============================================================
+  // ADD YOUR TWITCH COMMANDS HERE.
+  // Each entry needs a "name" (the command, e.g. "!discord")
+  // and a "desc" (what it does).
+  // ============================================================
+  const commands = [
+  {name: "!res", desc: "Displays my current resolution"},
+  {name: "!rank", desc: "Displays my current rank & MMR"},
+  {name: "!socials", desc: " <a href='https://beacons.ai/eternussx' target='_blank' rel='noopener'>beacons.ai/eternussx</a>"},
+  {name: "!discord, !dc", desc: " <a href='https://discord.gg/6kTVY9B5HR' target='_blank' rel='noopener'>discord.gg/6kTVY9B5HR</a>"},
+  {name: "!lurk", desc: "Alright you little shit, lurk. I don't care."},
+  {name: "!accountage", desc: "Unc"},
+  {name: "!uptime", desc: "Check how long the stream has been live"},
+  {name: "!clip", desc: "MEDAL CLIP IT"},
+  {name: "!flipcoin", desc: "If u win, u get a cookie. If u lose, u get a cookie."},
+  {name: "!followage", desc: "Day 1 or 1 day?"},
+  {name: "!fortune", desc: "Fortune teller's a shit"},
+  {name: "!time", desc: "Current time"},
+  {name: "!translate", desc: "Translates a word or phrase to english"},
+  {name: "!8ball", desc: "Ask the magic 8-ball a question"},
+  {name: "!dadjoke", desc: "A list of 350 dad jokes to make you groan"},
+  {name: "!hug", desc: "Hug someone, maybe even yourself"},
+  {name: "!slap", desc: "Slap someone, maybe even yourself"},
+  {name: "!uwu", desc: "Don't you dare fucking use this"},
+  {name: "!love", desc: "Love someone, maybe even yourself"},
+  ];
+  // ============================================================
+
+  const listEl = document.getElementById('command-list');
+  const emptyEl = document.getElementById('empty-state');
+  const countEl = document.getElementById('count-label');
+  const searchEl = document.getElementById('search-input');
+
+  function render(filter) {
+    const q = (filter || '').trim().toLowerCase();
+    const filtered = commands.filter(c =>
+      c.name.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)
+    );
+
+    listEl.innerHTML = '';
+
+    if (commands.length === 0) {
+      emptyEl.style.display = 'block';
+      emptyEl.querySelector('.big').textContent = 'no commands yet';
+      emptyEl.lastChild.textContent = 'add them in the code — look for the commands list';
+      countEl.textContent = '';
+      return;
+    }
+
+    if (filtered.length === 0) {
+      emptyEl.style.display = 'block';
+      emptyEl.querySelector('.big').textContent = 'no matches';
+      emptyEl.lastChild.textContent = 'try a different search';
+    } else {
+      emptyEl.style.display = 'none';
+    }
+
+    filtered.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'cmd-card pixel-box';
+      const name = document.createElement('p');
+      name.className = 'cmd-name';
+      name.textContent = c.name;
+      const desc = document.createElement('p');
+      desc.className = 'cmd-desc';
+      desc.innerHTML = c.desc;
+      card.appendChild(name);
+      card.appendChild(desc);
+      listEl.appendChild(card);
+    });
+
+    countEl.textContent = q
+      ? `${filtered.length} of ${commands.length} commands`
+      : `${commands.length} command${commands.length === 1 ? '' : 's'}`;
+  }
+
+  searchEl.addEventListener('input', (e) => render(e.target.value));
+  render('');
+</script>
+</body>
+</html>
